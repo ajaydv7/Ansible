@@ -1,0 +1,63 @@
+add-hoc commands
+-----------------------
+ansible all -m setup
+ansible webserver -m ping
+ansible webserver -a "hostname"
+ansible webserver -a "df -h"
+ansible webserver -a "free -m"
+ansible webserver -a "uptime"
+ansible webserver -a "date"
+ansible all -m copy -a "src=b dest=/tmp/b"
+ansible webserver -m file -a "dest=/tmp/b mpde=600"
+ansible webserver -m file -a "dest=/tmp/abc mode=755 state=directory"----------create directory
+ansible webserver -m file -a "dest=/tmp/abc state=absent" ------------------to remove directory
+ansible webserver -m apt -a "name=nginx state=present"-----------------------particular pkg is there or not
+ansible webserver -m apt -a "name=nginx state=latest"---------------------it will chk service is running if not it will update pkglatest version
+change state to absent to remove to delete particular pkg
+---------------------------------------------------------
+ansible webserver -m service -a "name=nginx state=started"--------------use service module to check service is running or not
+
+ansible webserver -m service -a "name=nginx state=restarted"
+ansible webserver -m service -a "name=nginx state=stopped"
+add-hoc command full advantage to perform quick and smaller tasks in particular group of servers 
+or particular server
+there is no need to write playbook for 
+small tasks like this
+
+---------------------------------------
+yaml lint
+atom.
+---------------------
+ansible-playbook web.yml-----------to execute playbook
+
+
+- name: configure webserver with nginx
+  hosts: webservers
+  become: True
+  tasks:
+    - name: install nginx
+      apt: name=nginx updte_cache=yes
+    
+    - name: copy nginx config file
+      copy: src=files/nginx.conf dest=/etc/nginx/sites-avilable/default
+
+
+    - name: enable configuration
+      file:>
+        dest=/etc/nginx/sites-avilable/default
+        src=/etc/nginx/sites-avilable/default
+        state=link 
+     - name: copy index.html
+       template: src=templates/index.html.j2 dest=/usr/share/nginx/html/index.html
+       notify: restart nginx
+  handlers:
+     - name: restart nginx
+       service: nmae=nginx state=restarted
+troubleshoot playbook
+--------------------------------------
+ansible-playbook --check appserver.yml
+ansible-playbook -v appserver.yml
+ansible-playbook -vvvv appserver.yml
+
+
+
